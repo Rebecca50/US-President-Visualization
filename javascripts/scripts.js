@@ -1,28 +1,52 @@
 
 function d3Project(data){
-// console.log(data.days);
+  // console.log(data.days);
 var svg = d3.select('svg');
   // debugger;
-var circles = svg.selectAll('circle')
+var elem = svg.selectAll('g')
   .data(data)
-  .enter()
-  .append('circle');
 
-var circles = svg.selectAll('circle')
-    .data(data)
-    .transition()
-      .duration(600)
+var elemEnter = elem.enter()
+  .append('g')
+  .attr('transform', function(d){return "translate("+(d.days/5)+", 80)"})
+
+var circle = elemEnter.append('circle')
         .attr('r', function(d){ return (d.days/100)+'px'})
-        .attr('cx', function(){ return (Math.random()*100) + '%'})
-        .attr('cy', function(){ return (Math.random()*100) + '%'})
-        .style('opacity', function(){ return (Math.random()*100)})
-        .style('fill', 'blue');
+        .attr('cx', function(){ return (d.days/5) })
+        .attr('cy', function(){ return 400 })
+        // .style('opacity', function(){ return (Math.random()*100)})
+        .style('fill', 'green');
 
-
-
-
-
+        elemEnter.append('text')
+        .attr('dx', function(d){return -20})
+        .text(function(d){return d.name});
 }
+
+
+
+
+
+
+// var circles = svg.selectAll('circle')
+//   .data(data)
+//   .enter()
+//   .append('circle')
+
+// var circles = svg.selectAll('circle')
+//     .data(data)
+//     .transition()
+//       .duration(600)
+//         .attr('r', function(d){ return (d.days/100)+'px'})
+//         .attr('cx', function(){ return (Math.random()*100) + '%'})
+//         .attr('cy', function(){ return (Math.random()*100) + '%'})
+//         .style('opacity', function(){ return (Math.random()*100)})
+//         .style('fill', 'blue');
+
+
+// var circles = svg.selectAll('circle')
+//         .append('text')
+//         .text(function(d){return d});
+// }
 
 //Load them up//
 
@@ -89,6 +113,6 @@ for (var i = pres.length - 1; i >= 0; i--) {
 
     setInterval(function(){
       d3Project(pres);
-    }, 500)
+    }, 1000)
 
 }
