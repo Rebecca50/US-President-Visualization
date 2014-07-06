@@ -7,9 +7,9 @@ var svg;
 var data = [];
 
 // starting position for drawing circles and lines
-var xPos = 20;
+var xPos = 45;
 var yPos = 0;
-var xLPos = 20;
+var xLPos = 45;
 
 // *************************
 // *****   build svg   *****
@@ -19,7 +19,7 @@ function buildSvg(){
   
   svg = d3.select('body')
       .append('svg')
-        .attr('width', '95%')
+        .attr('width', '100%')
         .attr('height', '75%')  
         .style('border', '1px solid black');
 }
@@ -82,7 +82,11 @@ function drawCircle(data){
   elemEnter.select("circle").on("mouseover", function(d) {
         div.transition()
           .duration(300)
-            .style('opacity', 1);
+            .style('opacity', 1)
+        circle.transition()
+          .duration(300)
+            .attr('r', function(d){ return 15; })
+            .style('fill', 'blue');
   });
 
   // on mousemove information about the president will be shown
@@ -93,20 +97,24 @@ function drawCircle(data){
     div
       // mouse position relative to the left and top of the circle 
       .style("left", (d3.event.pageX - 40) + "px")
-      .style("top", (d3.event.pageY + 15) + "px")
+      .style("top", (d3.event.pageY + 20) + "px")
       .html("<img src=" + imgPath + " /><p>" + d.name + "</br>" + d.days +" days</p>");
     
     // once the mouse is over a circle it changes its color to blue and display info
     // in the textfield at the bottom   
-    elemEnter.style('fill', 'blue');              
+    // elemEnter.style('fill', 'blue');              
     $p.html("President " + d.name + ", " + d.days + " days in office, " + d.start + " - " + d.end);
   });
 
   // on mouseout the tooltip (div) disappears
   elemEnter.select("circle").on("mouseout", function(d) {
-    div.transition()
-      .duration(500)
-        .style("opacity", 0);         
+        div.transition()
+          .duration(500)
+            .style("opacity", 0)
+        circle.transition()
+          .duration(300)
+            .attr('r', function(d){ return 10; })
+            .style('fill', 'black');        
   });
 
   // on mouse click the element 'elemEnter' (circle and text) will be removed from the graph
@@ -126,9 +134,9 @@ function drawCircle(data){
 // ****************************
 
 window.onload = function(){
-  $header = $('<h3>');
-  $header.html("Presidents of the United States");
-  $('body').append($header);
+  $header3 = $('<h3>');
+  $header3.html("Presidents of the United States");
+  $('body').append($header3); 
 
   buildSvg();
   // draw a graph based on the days in office (y-pos)
@@ -142,7 +150,7 @@ window.onload = function(){
   }, 10);   
 
   $div = $('<div>'); 
-  $p = $('<p>').html("mouse over on circle to display info about president / mouse click on circle to remove president from graph");
+  $p = $('<p>').addClass('infotext').html("mouse over on circle to display info about president / mouse click on circle to remove president from graph");
   $div.append($p);
   $p = $('<p>').addClass('infobox').html("info about president appears here");
   $div.append($p);

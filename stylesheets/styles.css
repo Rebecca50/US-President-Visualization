@@ -1,5 +1,14 @@
-body {
-  background-color: red;
+body {  
+  background: url("/images/presidents.png") no-repeat;
+  background-size: cover;
+}
+
+svg { 
+  background-color: rgba(255,0,0,0.5);
+}
+
+h3 {
+  text-align: center;
 }
 
 path {
@@ -26,11 +35,15 @@ div.tooltip img {
   width: 40px;
 }
 
-.infobox {
-  width: 95%;
+.infobox {  
   background-color: white;
-  font-style: italic;
+  font-weight: bold;
   padding: 5px;
   padding-right: 0;
+  text-align: center;
+}
 
+.infotext {
+  color: white;
+  text-align: center;
 }
