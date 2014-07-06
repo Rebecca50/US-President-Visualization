@@ -1,3 +1,36 @@
 body {
   background-color: red;
 }
+
+path {
+    stroke: blue;
+    stroke-width: 1;
+    fill: none;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 100px;
+  height: 50px;
+  padding: 5px;
+  font: 10px sans-serif;
+  background: #ddd;
+  border: solid 1px #aaa;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+div.tooltip img {
+  float: left;
+  width: 40px;
+}
+
+.infobox {
+  width: 95%;
+  background-color: white;
+  font-style: italic;
+  padding: 5px;
+  padding-right: 0;
+
+}

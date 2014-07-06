@@ -1,118 +1,151 @@
+// *********************************
+// *****   global variables   ******
+// *********************************
 
-function d3Project(data){
-  // console.log(data.days);
-var svg = d3.select('svg');
-  // debugger;
-var elem = svg.selectAll('g')
-  .data(data)
+var timer;
+var svg;
+var data = [];
 
-var elemEnter = elem.enter()
-  .append('g')
-  .attr('transform', function(d){return "translate("+(d.days/5)+", 80)"})
+// starting position for drawing circles and lines
+var xPos = 20;
+var yPos = 0;
+var xLPos = 20;
 
-var circle = elemEnter.append('circle')
-        .attr('r', function(d){ return (d.days/100)+'px'})
-        .attr('cx', function(){ return (d.days/5) })
-        .attr('cy', function(){ return 400 })
-        // .style('opacity', function(){ return (Math.random()*100)})
-        .style('fill', 'green');
+// *************************
+// *****   build svg   *****
+// *************************
 
-        elemEnter.append('text')
-        .attr('dx', function(d){return -20})
-        .text(function(d){return d.name});
+function buildSvg(){
+  
+  svg = d3.select('body')
+      .append('svg')
+        .attr('width', '95%')
+        .attr('height', '75%')  
+        .style('border', '1px solid black');
 }
 
+// *************************
+// *****   draw path   *****
+// *************************
 
+function drawPath(data){
+ 
+  var elem = svg.selectAll('g')
+        .data(data)
+          .append('g')
 
+  // creates the line for the path
+  var lineFunction = d3.svg.line()
+        .x(function(d) { return xLPos += 25; })
+        .y(function(d) { return (100-(d.days/11))+350; })                        
+        .interpolate("linear");
 
+  // d contains a series of path descriptions to draw the graph
+  var lineGraph = svg.append('path')
+        .attr("d", lineFunction(data)); 
+}
 
+// ***************************
+// *****   draw circle   *****
+// ***************************
 
-// var circles = svg.selectAll('circle')
-//   .data(data)
-//   .enter()
-//   .append('circle')
+function drawCircle(data){
+ 
+  var elem = svg.selectAll('g')
+        .data(data)
 
-// var circles = svg.selectAll('circle')
-//     .data(data)
-//     .transition()
-//       .duration(600)
-//         .attr('r', function(d){ return (d.days/100)+'px'})
-//         .attr('cx', function(){ return (Math.random()*100) + '%'})
-//         .attr('cy', function(){ return (Math.random()*100) + '%'})
-//         .style('opacity', function(){ return (Math.random()*100)})
-//         .style('fill', 'blue');
+  // creates an element 'elemEnter' for each president to combine circle and text
+  var elemEnter = elem.enter()
+        .append('g')
 
+  // creates a circle for each president, all same size but y-pos dependent on days 
+  var circle = elemEnter.append('circle')         
+        .attr('r', function(d){ return 10; })
+        .attr('cx', function(d){ return xPos += 25; })        
+        .attr('cy', function(d){ return (100-(d.days/11))+350; }) 
 
-// var circles = svg.selectAll('circle')
-//         .append('text')
-//         .text(function(d){return d});
-// }
+  // creates an invisible tooltip (div) for each circle, which appears on mouseover/mousemove event 
+  var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+          .style("opacity", 0);
 
-//Load them up//
+  // creates a text for each presindent, with appears together with the circle
+  elemEnter.append('text')
+        .transition()
+          .duration(500) 
+            .attr('dx', function(d){ return xPos-5; })        
+            .attr('dy', function(d){ return (100-(d.days/11))+330; })
+            .text(function(d){ return d.start ; })
+              .style('font-size', '10px');
+
+  // on mouseover the tooltip (div) appears
+  elemEnter.select("circle").on("mouseover", function(d) {
+        div.transition()
+          .duration(300)
+            .style('opacity', 1);
+  });
+
+  // on mousemove information about the president will be shown
+  elemEnter.select("circle").on("mousemove", function(d) {
+    var imgName = d.name + ".jpg";
+    var imgPath = "../images/" + imgName; 
+
+    div
+      // mouse position relative to the left and top of the circle 
+      .style("left", (d3.event.pageX - 40) + "px")
+      .style("top", (d3.event.pageY + 15) + "px")
+      .html("<img src=" + imgPath + " /><p>" + d.name + "</br>" + d.days +" days</p>");
+    
+    // once the mouse is over a circle it changes its color to blue and display info
+    // in the textfield at the bottom   
+    elemEnter.style('fill', 'blue');              
+    $p.html("President " + d.name + ", " + d.days + " days in office, " + d.start + " - " + d.end);
+  });
+
+  // on mouseout the tooltip (div) disappears
+  elemEnter.select("circle").on("mouseout", function(d) {
+    div.transition()
+      .duration(500)
+        .style("opacity", 0);         
+  });
+
+  // on mouse click the element 'elemEnter' (circle and text) will be removed from the graph
+  elemEnter.on("click", function(d) {  
+      elemEnter.remove()   
+  });
+
+  // unneeded elements will be removed from the svg
+  svg.selectAll('elem')
+    .data(data)
+      .exit()
+      .remove()
+}
+
+// ****************************
+// *****   Load them up   *****
+// ****************************
 
 window.onload = function(){
+  $header = $('<h3>');
+  $header.html("Presidents of the United States");
+  $('body').append($header);
 
-  svg = d3.select('body')
-  .append('svg')
-    .attr('width', '90%')
-    .attr('height', '90%');
+  buildSvg();
+  // draw a graph based on the days in office (y-pos)
+  drawPath(presidents);
+  // display one president after the other as a circle w/text on the graph
+  timer = setInterval(function(){
+    var president = presidents.shift() // first president in array
+    data.push(president); 
+    drawCircle(data);
+    if (presidents.length === 0) window.clearInterval(timer); // stop timer
+  }, 10);   
 
- //   data = loadFile('/presidents.js');
- var pres = [
-{name: "Washington "   , days: 2864},
-{name: "Adams      "   , days: 1460},
-{name: "Jefferson  "   , days: 2921},
-{name: "Madison    "   , days: 2921},
-{name: "Monroe     "   , days: 2921},
-{name: "Adams      "   , days: 1460},
-{name: "Jackson    "   , days: 2921},
-{name: "VanBuren   "   , days: 1460},
-{name: "Harrison   "   , days:   31},
-{name: "Tyler      "   , days: 1427},
-{name: "Polk       "   , days: 1460},
-{name: "Taylor     "   , days:  491},
-{name: "Filmore    "   , days:  967},
-{name: "Pierce     "   , days: 1460},
-{name: "Buchanan   "   , days: 1460},
-{name: "Lincoln    "   , days: 1503},
-{name: "Johnson    "   , days: 1418},
-{name: "Grant      "   , days: 2921},
-{name: "Hayes      "   , days: 1460},
-{name: "Garfield   "   , days:  199},
-{name: "Arthur     "   , days: 1260},
-{name: "Cleveland  "   , days: 1460},
-{name: "Harrison   "   , days: 1460},
-{name: "Cleveland  "   , days: 1460},
-{name: "McKinley   "   , days: 1655},
-{name: "Roosevelt  "   , days: 2727},
-{name: "Taft       "   , days: 1460},
-{name: "Wilson     "   , days: 2921},
-{name: "Harding    "   , days:  881},
-{name: "Coolidge   "   , days: 2039},
-{name: "Hoover     "   , days: 1460},
-{name: "Roosevelt  "   , days: 4452},
-{name: "Truman     "   , days: 2810},
-{name: "Eisenhower "   , days: 2922},
-{name: "Kennedy    "   , days: 1036},
-{name: "Johnson    "   , days: 1886},
-{name: "Nixon      "   , days: 2027},
-{name: "Ford       "   , days:  895},
-{name: "Carter     "   , days: 1461},
-{name: "Reagan     "   , days: 2922},
-{name: "Bush       "   , days: 1461},
-{name: "Clinton    "   , days: 2922},
-{name: "Bush       "   , days: 1110},
-];
-
-for (var i = pres.length - 1; i >= 0; i--) {
-  pres[i].name = pres[i].name.trim();
-};
-
-
-
-
-    setInterval(function(){
-      d3Project(pres);
-    }, 1000)
-
+  $div = $('<div>'); 
+  $p = $('<p>').html("mouse over on circle to display info about president / mouse click on circle to remove president from graph");
+  $div.append($p);
+  $p = $('<p>').addClass('infobox').html("info about president appears here");
+  $div.append($p);
+  $('body').append($div);
 }
+
