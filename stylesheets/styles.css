@@ -1,9 +1,9 @@
-body {  
+body {
   background: url("/images/presidents.png") no-repeat;
   background-size: cover;
 }
 
-svg { 
+svg {
   background-color: rgba(255,0,0,0.5);
 }
 
@@ -35,7 +35,7 @@ div.tooltip img {
   width: 40px;
 }
 
-.infobox {  
+.infobox {
   background-color: white;
   font-weight: bold;
   padding: 5px;
