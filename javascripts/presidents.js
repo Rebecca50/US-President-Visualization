@@ -30,7 +30,7 @@ var presidents = [
 {name: "Harding    "   , days:  881, start: 1921, end: 1923},
 {name: "Coolidge   "   , days: 2039, start: 1923, end: 1929},
 {name: "Hoover     "   , days: 1460, start: 1929, end: 1933},
-{name: "FD.Roosevelt"  , days: 4452, start: 1933, end: 1945},
+{name: "FDR        "   , days: 4452, start: 1933, end: 1945},
 {name: "Truman     "   , days: 2810, start: 1945, end: 1953},
 {name: "Eisenhower "   , days: 2922, start: 1953, end: 1961},
 {name: "Kennedy    "   , days: 1036, start: 1961, end: 1963},
